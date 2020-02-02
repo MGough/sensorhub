@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/MGough/sensorhub",
-    packages=["smbus2>=0.3.0"],
+    install_requires=["smbus2>=0.3.0"],
     tests_require=["pytest>=5.3.5"],
     classifiers=[
         "Programming Language :: Python :: 3",
