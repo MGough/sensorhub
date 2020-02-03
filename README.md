@@ -9,6 +9,7 @@ however an exception will be thrown if you try to read from it while it is disco
 ## How to use it
 Interacting with the SensorHub is easy. First create an instance of the SensorHub, which will open communication with it:
 ```python
+from sensorhub.hub import SensorHub
 hub = SensorHub()
 ```
 

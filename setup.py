@@ -5,13 +5,14 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="sensorhub",
-    version="1.0.0",
+    version="1.0.1",
     author="Merlin Gough",
     author_email="goughmerlin@gmail.com",
     description="A simple library to use with the DockerPi SensorHub (EP-0106)",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/MGough/sensorhub",
+    packages=["sensorhub"],
     install_requires=["smbus2>=0.3.0"],
     tests_require=["pytest>=5.3.5"],
     classifiers=[
