@@ -18,3 +18,16 @@ Then it's just a case of calling the method for the value that you're after:
 ```python
 temperature = hub.get_temperature()
 ```
+
+Other available methods are:
+```
+hub.get_off_board_temperature()
+hub.get_humidity()
+hub.get_temperature()
+hub.is_motion_detected()
+hub.get_brightness()
+hub.get_barometer_temperature()
+hub.get_barometer_pressure()
+```
+
+See the docstrings for more information on return types and exceptions that may be raised.
