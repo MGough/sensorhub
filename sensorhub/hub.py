@@ -29,13 +29,13 @@ class StatusRegisterErrorCode(Enum):
 
 
 class SensorHub:
-    bus: SMBus
+    _bus: SMBus
 
-    def __init__(self):
-        self.bus = SMBus(DEVICE_BUS)
+    def __init__(self, system_management_bus: SMBus):
+        self._bus = system_management_bus or SMBus(DEVICE_BUS)
 
     def _read_sensor_board_register(self, buffer: SensorRegister) -> int:
-        return self.bus.read_byte_data(DEVICE_ADDR, buffer.value)
+        return self._bus.read_byte_data(DEVICE_ADDR, buffer.value)
 
     def _get_error_codes(self) -> int:
         """
