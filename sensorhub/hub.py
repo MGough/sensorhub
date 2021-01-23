@@ -124,9 +124,7 @@ class SensorHub:
             return lux_reading
 
     def _is_barometer_working(self) -> bool:
-        if self._read_sensor_board_register(SensorRegister.BAROMETRIC_SENSOR_STATUS) == 0:
-            return True
-        raise IOError("Barometric Sensor Error")
+        return self._read_sensor_board_register(SensorRegister.BAROMETRIC_SENSOR_STATUS) == 0
 
     def get_barometer_temperature(self) -> int:
         """
@@ -136,6 +134,7 @@ class SensorHub:
         """
         if self._is_barometer_working():
             return self._read_sensor_board_register(SensorRegister.BAROMETRIC_TEMPERATURE)
+        raise IOError("Barometric Sensor Error")
 
     def get_barometer_pressure(self) -> float:
         """
@@ -150,3 +149,4 @@ class SensorHub:
 
             # convert to hPa
             return round(pascals * 0.01, ndigits=2)
+        raise IOError("Barometric Sensor Error")
