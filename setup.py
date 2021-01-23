@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="sensorhub",
-    version="2.0.1",
+    version="2.0.2",
     author="Merlin Gough",
     author_email="goughmerlin@gmail.com",
     description="A simple library to use with the DockerPi SensorHub (EP-0106)",
