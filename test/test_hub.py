@@ -1,9 +1,9 @@
 from pytest import fixture, raises, mark
-from unittest.mock import call, Mock
+from unittest.mock import call, Mock, patch
 
 from smbus2 import SMBus
 
-from sensorhub.hub import SensorHub, SensorRegister
+from sensorhub.hub import SensorHub, SensorRegister, DEVICE_BUS
 
 
 @fixture
@@ -216,3 +216,12 @@ def test_barometer_pressure_returns_expected_reading(sensor_hub, bus, device_add
         call(device_address, SensorRegister.BAROMETRIC_PRESSURE_MIDDLE.value),
         call(device_address, SensorRegister.BAROMETRIC_PRESSURE_HIGH.value)
     ])
+
+
+@patch("sensorhub.hub.SMBus", autospec=True)
+def test_can_be_created_with_default_smbus(sm_bus):
+    hub = SensorHub()
+
+    assert hub._bus == sm_bus.return_value
+    sm_bus.assert_called_once_with(DEVICE_BUS)
+
