@@ -31,7 +31,7 @@ class StatusRegisterErrorCode(Enum):
 class SensorHub:
     _bus: SMBus
 
-    def __init__(self, system_management_bus: SMBus):
+    def __init__(self, system_management_bus: SMBus = None):
         self._bus = system_management_bus or SMBus(DEVICE_BUS)
 
     def _read_sensor_board_register(self, buffer: SensorRegister) -> int:
