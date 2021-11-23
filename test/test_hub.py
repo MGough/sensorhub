@@ -113,7 +113,17 @@ def test_on_board_temperature_is_not_up_to_date(sensor_hub, bus, device_address)
 
     temperature = sensor_hub.get_temperature()
 
-    assert temperature == -1
+    assert temperature == sys.maxsize
+    bus.read_byte_data.assert_called_once_with(
+        device_address, SensorRegister.ON_BOARD_SENSOR_OUT_OF_DATE.value
+    )
+
+def test_on_board_temperature_is_not_up_to_date_raises_error(sensor_hub, bus, device_address):
+    bus.read_byte_data.return_value = 1
+
+    with raises(ValueError, match="Data from the on board sensor is out of date."):
+        sensor_hub.get_temperature(throw_error_if_out_of_range=True)
+
     bus.read_byte_data.assert_called_once_with(
         device_address, SensorRegister.ON_BOARD_SENSOR_OUT_OF_DATE.value
     )

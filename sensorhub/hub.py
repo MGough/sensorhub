@@ -89,14 +89,18 @@ class SensorHub:
             return self._read_sensor_board_register(SensorRegister.ON_BOARD_HUMIDITY)
         return -1
 
-    def get_temperature(self) -> int:
+    def get_temperature(self, throw_error_if_out_of_range=False) -> int:
         """
         Get the on board temperature
-        :return: Temperature in celcius, or -1 if the data is not up to date
+        :return: Temperature in celcius, or sys.maxsize if the data is not up to date
+        :raises ValueError: if `throw_error_if_out_of_range` and the data is not up to date
+                            unlike the off board sensor, this will potentially happen very frequently
         """
         if self._is_temperature_and_humidity_data_up_to_date():
             return self._read_sensor_board_register(SensorRegister.ON_BOARD_TEMPERATURE)
-        return -1
+        if not throw_error_if_out_of_range:
+            return sys.maxsize
+        raise ValueError("Data from the on board sensor is out of date.")
 
     def is_motion_detected(self) -> bool:
         """
