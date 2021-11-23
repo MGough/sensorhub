@@ -1,3 +1,4 @@
+import sys
 from pytest import fixture, raises, mark
 from unittest.mock import call, Mock, patch
 
@@ -28,12 +29,27 @@ def sensor_hub(bus):
     0b1101
 ])
 def test_off_board_temperature_out_of_range_returns_minus_1(error_code, sensor_hub, bus, device_address):
-    bus.read_byte_data.return_value = 1
+    bus.read_byte_data.return_value = error_code
 
     temperature = sensor_hub.get_off_board_temperature()
 
     bus.read_byte_data.assert_called_once_with(device_address, SensorRegister.STATUS.value)
-    assert temperature == -1
+    assert temperature == sys.maxsize
+
+
+@mark.parametrize("error_code", [
+    0b0001,
+    0b0101,
+    0b1001,
+    0b1101
+])
+def test_off_board_temperature_out_of_range_raises_error_when_requested(error_code, sensor_hub, bus, device_address):
+    bus.read_byte_data.return_value = error_code
+
+    with raises(ValueError, match="Temperature out of range."):
+        sensor_hub.get_off_board_temperature(throw_error_if_out_of_range=True)
+
+    bus.read_byte_data.assert_called_once_with(device_address, SensorRegister.STATUS.value)
 
 
 @mark.parametrize("error_code", [

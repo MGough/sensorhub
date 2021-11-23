@@ -1,3 +1,4 @@
+import sys
 from smbus2 import SMBus
 from enum import Enum
 
@@ -58,14 +59,18 @@ class SensorHub:
             raise IOError("Sensor Missing")
         return False
 
-    def get_off_board_temperature(self) -> int:
+    def get_off_board_temperature(self, throw_error_if_out_of_range=False) -> int:
         """
         Returns the temperature in degrees celcius.
-        :return: Temperature in degrees celcius, or -1 if it's out of range
+        :return: Temperature in degrees celcius, or sys.maxsize if it's out of range
+                 alternatively if `throw_error_if_out_of_range` is True then it will raise an error
         :raises IOError: Raised if the sensor is not connected
+        :raises ValueError: If `throw_error_if_out_of_range` is True and the temperature is out of range
         """
         if self._is_off_board_temperature_out_of_range():
-            return -1
+            if not throw_error_if_out_of_range:
+                return sys.maxsize
+            raise ValueError("Temperature out of range.")
         return self._read_sensor_board_register(SensorRegister.OFF_BOARD_TEMPERATURE)
 
     def _is_temperature_and_humidity_data_up_to_date(self) -> bool:
