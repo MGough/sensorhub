@@ -1,3 +1,4 @@
+import sys
 from smbus2 import SMBus
 from enum import Enum
 
@@ -58,14 +59,18 @@ class SensorHub:
             raise IOError("Sensor Missing")
         return False
 
-    def get_off_board_temperature(self) -> int:
+    def get_off_board_temperature(self, throw_error_if_out_of_range=False) -> int:
         """
         Returns the temperature in degrees celcius.
-        :return: Temperature in degrees celcius, or -1 if it's out of range
+        :return: Temperature in degrees celcius, or sys.maxsize if it's out of range
+                 alternatively if `throw_error_if_out_of_range` is True then it will raise an error
         :raises IOError: Raised if the sensor is not connected
+        :raises ValueError: If `throw_error_if_out_of_range` is True and the temperature is out of range
         """
         if self._is_off_board_temperature_out_of_range():
-            return -1
+            if not throw_error_if_out_of_range:
+                return sys.maxsize
+            raise ValueError("Temperature out of range.")
         return self._read_sensor_board_register(SensorRegister.OFF_BOARD_TEMPERATURE)
 
     def _is_temperature_and_humidity_data_up_to_date(self) -> bool:
@@ -84,14 +89,18 @@ class SensorHub:
             return self._read_sensor_board_register(SensorRegister.ON_BOARD_HUMIDITY)
         return -1
 
-    def get_temperature(self) -> int:
+    def get_temperature(self, throw_error_if_out_of_range=False) -> int:
         """
         Get the on board temperature
-        :return: Temperature in celcius, or -1 if the data is not up to date
+        :return: Temperature in celcius, or sys.maxsize if the data is not up to date
+        :raises ValueError: if `throw_error_if_out_of_range` and the data is not up to date
+                            unlike the off board sensor, this will potentially happen very frequently
         """
         if self._is_temperature_and_humidity_data_up_to_date():
             return self._read_sensor_board_register(SensorRegister.ON_BOARD_TEMPERATURE)
-        return -1
+        if not throw_error_if_out_of_range:
+            return sys.maxsize
+        raise ValueError("Data from the on board sensor is out of date.")
 
     def is_motion_detected(self) -> bool:
         """
